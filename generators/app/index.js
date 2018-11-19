@@ -3,6 +3,7 @@ require('colors');
 const fs = require('fs');
 const path = require('path');
 const Generator = require('yeoman-generator');
+const rename = require('gulp-rename');
 
 const NAME = 'name';
 const SCOPED = 'scoped';
@@ -52,6 +53,10 @@ module.exports = class extends Generator {
             }
         ];
 
+        this.registerTransformStream(rename((path) => {
+            path.dirname = path.dirname.replace(/^_/, '.');
+        }));
+
         this.fs.copyTpl(
             this.templatePath(),
             ...defaultArgs
@@ -68,15 +73,19 @@ module.exports = class extends Generator {
             npm: true,
             bower: false
         });
+    }
 
+    end() {
+        this._commitInitial();
+
+        console.log('All done!'.green.bold);
+    }
+
+    _commitInitial() {
         this.spawnCommandSync('cwd', [this.destinationRoot()]);
         this.spawnCommandSync('git', ['init']);
         this.spawnCommandSync('git', ['remote', 'add', 'origin', `git@github.com:sahariko/${this.answers.name}.git`]);
         this.spawnCommandSync('git', ['add', '--all']);
         this.spawnCommandSync('git', ['commit', '-m', 'Project initialization']);
-    }
-
-    end() {
-        console.log('All done!'.green.bold);
     }
 };
