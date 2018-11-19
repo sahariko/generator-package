@@ -54,7 +54,9 @@ module.exports = class extends Generator {
         ];
 
         this.registerTransformStream(rename((path) => {
-            path.basename = path.basename.replace(/^_/, '.');
+            if (path.basename.startsWith('_')) {
+                path.basename = path.basename.replace(/^_/, '.');
+            }
         }));
 
         this.fs.copyTpl(
