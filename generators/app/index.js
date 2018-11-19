@@ -57,6 +57,10 @@ module.exports = class extends Generator {
             if (path.basename.startsWith('_')) {
                 path.basename = path.basename.replace(/^_/, '.');
             }
+
+            if (path.dirname.startsWith('_')) {
+                path.dirname = path.dirname.replace(/^_/, '.');
+            }
         }));
 
         this.fs.copyTpl(
